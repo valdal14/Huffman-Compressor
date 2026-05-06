@@ -135,7 +135,7 @@ int compare_nodes(const void *a, const void *b)
 /**
  * @brief Prints out the sorted array 
  * @param struct HuffNode array of pointers
- * @path int size the size of the array
+ * @param int size the size of the array
  * @return void
  */
 void print_sorted_array(struct HuffNode **nodes, int size)
