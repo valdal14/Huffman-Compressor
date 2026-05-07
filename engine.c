@@ -135,7 +135,7 @@ int compare_nodes(const void *a, const void *b)
 /**
  * @brief Prints out the sorted array 
  * @param struct HuffNode array of pointers
- * @path int size the size of the array
+ * @param int size the size of the array
  * @return void
  */
 void print_sorted_array(struct HuffNode **nodes, int size)
@@ -144,6 +144,37 @@ void print_sorted_array(struct HuffNode **nodes, int size)
    
     for(int i = 0; i < size; i++)
         printf("Char: %c | Freq: %d\n", nodes[i]->data, nodes[i]->freq);
+}
+
+/**
+ * @brief Factory method used to build the HuffNode tree
+ * @param struct HuffNode nodes array pointer 
+ * @param int size The size of the sorted array 
+ * @return struct HuffNode pointer 
+ */
+struct HuffNode *build_huffman_tree(struct HuffNode **nodes, int size)
+{
+    while(size > 1)
+    {
+        struct HuffNode *root = (struct HuffNode *)calloc(1, sizeof(struct HuffNode));
+        if(root == NULL) exit(1);
+        root->data = '\0';
+        root->left = nodes[0];
+        root->right = nodes[1];
+        root->freq = nodes[0]->freq + nodes[1]->freq;
+        // Put the parent into the first slot.
+        nodes[0] = root;
+        // Shift: Close the gap at index 1.
+        // We start at index 1, and copy the item from the right (i + 1) into the current slot (i).
+        for (int i = 1; i < size - 1; i++)
+            nodes[i] = nodes[i + 1];
+        
+        // Shrink the desk and Re-sort
+        size--;
+        qsort(nodes, size, sizeof(struct HuffNode *), compare_nodes);
+    }
+
+    return nodes[0];
 }
 
 int main(int argc, char **argv)
@@ -160,6 +191,9 @@ int main(int argc, char **argv)
     qsort(nodes, unique_values, sizeof(struct HuffNode *), compare_nodes);
     
     print_sorted_array(nodes, unique_values);
+
+    struct HuffNode *root = build_huffman_tree(nodes, unique_values);
+    printf("Root frequency = %d\n", root->freq);
 
     free(filepath);
     return 0;
